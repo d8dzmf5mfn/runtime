@@ -12,6 +12,7 @@
     "packages/shared",
     "packages/vibe-sync",
     "packages/context-pruner",
-    "packages/cli"
+    "packages/cli",
+    "packages/mcp-server"
   ]
 }

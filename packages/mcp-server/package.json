@@ -1,0 +1,23 @@
+{
+  "name": "@runtime/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "@runtime/shared": "file:../shared",
+    "@runtime/vibe-sync": "file:../vibe-sync",
+    "@runtime/context-pruner": "file:../context-pruner"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
