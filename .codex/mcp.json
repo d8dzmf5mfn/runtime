@@ -2,7 +2,7 @@
   "servers": {
     "runtime": {
       "command": "node",
-      "args": ["packages/mcp-server/dist/index.js"]
+      "args": ["/Users/chengziyan/Developer/Runtime/packages/mcp-server/dist/index.js"]
     }
   }
 }
