@@ -13,6 +13,7 @@
     "packages/vibe-sync",
     "packages/context-pruner",
     "packages/cli",
-    "packages/mcp-server"
+    "packages/mcp-server",
+    "packages/vscode-extension"
   ]
 }

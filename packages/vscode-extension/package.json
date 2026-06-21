@@ -1,0 +1,40 @@
+{
+  "name": "runtime-mcp",
+  "displayName": "Runtime MCP",
+  "description": "AI Dev Control Plane \u2014 file locking, context selection, token budgeting, and SOP rule matching for concurrent AI development in VS Code",
+  "version": "0.1.0",
+  "publisher": "d8dzmf5mfn",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/d8dzmf5mfn/runtime.git"
+  },
+  "engines": {
+    "vscode": "^1.98.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "runtimeMcpProvider",
+        "label": "Runtime MCP Server Provider"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "npm run build:server && tsc -p ./tsconfig.json",
+    "watch": "tsc -watch -p ./tsconfig.json",
+    "package": "vsce package",
+    "build:server": "node ../../scripts/copy-mcp-server.mjs"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.98.0",
+    "typescript": "^5.7.0",
+    "@vscode/vsce": "^3.0.0"
+  }
+}

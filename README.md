@@ -32,7 +32,8 @@ Runtime
 │   ├── sop-graph/             #   SOP 决策图 DSL
 │   └── prompt-builder/        #   Prompt 组装器
 ├── packages/cli               # CLI 入口 (Commander.js)
-└── packages/mcp-server        # MCP Server — 供 AI 工具直接调用
+├── packages/mcp-server        # MCP Server — 供 AI 工具直接调用
+└── packages/vscode-extension  # VS Code Extension — 在 VS Code 中使用 Runtime MCP
 ```
 
 ## 快速开始
@@ -272,11 +273,12 @@ npm test          # 36 个测试用例
 ### 项目结构
 ```
 packages/
-├── shared/          # 共享类型
-├── vibe-sync/       # VibeSync 核心
-├── context-pruner/  # ContextPruner 核心
-├── cli/             # CLI 入口
-└── mcp-server/      # MCP Server（7 个工具）
+├── shared/             # 共享类型
+├── vibe-sync/          # VibeSync 核心
+├── context-pruner/     # ContextPruner 核心
+├── cli/                # CLI 入口
+├── mcp-server/         # MCP Server（7 个工具）
+└── vscode-extension/   # VS Code Extension（MCP 集成）
 ```
 
 ## 技术栈
@@ -298,7 +300,7 @@ packages/
 - [x] MCP Server + Codex 插件
 - [x] Codex Skill（使用指南）
 - [x] Claude Code 适配 (.mcp.json)
-- [ ] VS Code 扩展
+- [x] VS Code 扩展
 - [ ] SQLite 持久化
 - [ ] 可视化 Dashboard
 
