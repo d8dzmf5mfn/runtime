@@ -1,0 +1,17 @@
+{
+  "name": "runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI Dev Control Plane - VibeSync + ContextPruner",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm test --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/vibe-sync",
+    "packages/context-pruner",
+    "packages/cli"
+  ]
+}

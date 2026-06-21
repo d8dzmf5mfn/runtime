@@ -1,0 +1,13 @@
+[
+  {
+    "id": "jMvnj-w3xD07",
+    "agent": "cursor",
+    "name": "Demo Session",
+    "branch": "dev/test-demo",
+    "worktreePath": "/Users/chengziyan/Developer/Runtime/../wt-dev/test-demo",
+    "status": "active",
+    "createdAt": "2026-06-21T09:30:34.011Z",
+    "updatedAt": "2026-06-21T09:30:34.036Z",
+    "metadata": {}
+  }
+]
