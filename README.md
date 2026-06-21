@@ -63,6 +63,33 @@ bash bootstrap.sh
 node packages/cli/dist/index.js --help
 ```
 
+## 安装
+
+### 方式一：克隆仓库（完整版）
+
+```bash
+git clone https://github.com/d8dzmf5mfn/runtime.git
+cd runtime
+npm install
+npm run build
+```
+
+### 方式二：用 Claude Code 安装插件（推荐）
+
+```bash
+# 在项目目录下运行
+claude mcp add --transport stdio runtime --scope project -- \
+  node /path/to/runtime/packages/mcp-server/dist/index.js
+```
+
+> **前提**：需要先 `git clone` 并 `npm install && npm run build`。
+
+### 方式三：仅使用 MCP 配置（轻量）
+
+如果只是想用 MCP 工具，不需要 CLI，复制项目中的 `.mcp.json` 到你的项目根目录即可。
+
+---
+
 ## MCP 集成
 
 Runtime 通过 **Model Context Protocol (MCP)** 将核心能力暴露给 AI 客户端（Codex、Claude Code、Cursor 等），让 AI 工具直接调用 Runtime 的服务。
@@ -180,7 +207,34 @@ runtime context prompt src/api/auth.ts -s <session-id-A>
 runtime context prompt src/components/button.tsx -s <session-id-B>
 ```
 
-### MCP 集成演示（Codex 中直接调用）
+### 安装
+
+### 方式一：克隆仓库（完整版）
+
+```bash
+git clone https://github.com/d8dzmf5mfn/runtime.git
+cd runtime
+npm install
+npm run build
+```
+
+### 方式二：用 Claude Code 安装插件（推荐）
+
+```bash
+# 在项目目录下运行
+claude mcp add --transport stdio runtime --scope project -- \
+  node /path/to/runtime/packages/mcp-server/dist/index.js
+```
+
+> **前提**：需要先 `git clone` 并 `npm install && npm run build`。
+
+### 方式三：仅使用 MCP 配置（轻量）
+
+如果只是想用 MCP 工具，不需要 CLI，复制项目中的 `.mcp.json` 到你的项目根目录即可。
+
+---
+
+## MCP 集成演示（Codex 中直接调用）
 
 ```
 # 编辑前锁定文件
