@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -7,7 +6,6 @@ export function activate(context: vscode.ExtensionContext) {
             provideMcpServerDefinitions: async () => {
                 const servers: vscode.McpServerDefinition[] = [];
 
-                // Try workspace root first, then fall back to extension install directory
                 const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
                 const extRoot = context.extensionUri;
 
@@ -36,21 +34,19 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
                 if (!serverPath) {
-                    // Notify user
                     vscode.window.showWarningMessage(
                         'Runtime MCP server not found. Clone the Runtime repo and run npm install && npm run build first, or reinstall this extension.'
                     );
                     return servers;
                 }
 
-                servers.push(new vscode.McpStdioServerDefinition({
-                    label: 'runtime',
-                    command: 'node',
-                    args: [serverPath.fsPath],
-                    cwd: serverPath,
-                    env: {},
-                    version: '0.1.0'
-                }));
+                servers.push(new vscode.McpStdioServerDefinition(
+                    'runtime',
+                    'node',
+                    [serverPath.fsPath],
+                    {},
+                    '0.1.0'
+                ));
 
                 return servers;
             },
