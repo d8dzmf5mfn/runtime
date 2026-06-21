@@ -44,35 +44,19 @@ function fail(message: string) {
 const TOOLS = [
   // ── Session tools ──
   {
-    name: "vibe_session_start",
-    description: "Create a new AI agent session. Returns a sessionId that other tools need for file locking.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        agent: { type: "string", description: "Agent type: cursor, claude, codex, or custom" },
-        branch: { type: "string", description: "Git branch for this session" },
-        name: { type: "string", description: "Optional session name (defaults to agent-branch)" },
-      },
-      required: ["agent", "branch"],
-    },
-  },
-  {
-    name: "vibe_session_list",
-    description: "List all AI agent sessions with their status (active/paused/merged/closed).",
+    name: "vibe_session_info",
+    description: "Get the current auto-detected session info (agent type, session ID, name). No parameters needed.",
     inputSchema: {
       type: "object",
       properties: {},
     },
   },
   {
-    name: "vibe_session_stop",
-    description: "Stop and close an AI agent session.",
+    name: "vibe_session_list",
+    description: "List all AI agent sessions (returns the current singleton session).",
     inputSchema: {
       type: "object",
-      properties: {
-        sessionId: { type: "string", description: "Session ID to stop" },
-      },
-      required: ["sessionId"],
+      properties: {},
     },
   },
   // ── Lock tools ──
@@ -83,11 +67,11 @@ const TOOLS = [
       type: "object",
       properties: {
         file: { type: "string", description: "File path to lock (relative to repo root)" },
-        sessionId: { type: "string", description: "AI agent session ID (get from vibe_session_start)" },
+        sessionId: { type: "string", description: "AI agent session ID (optional; uses current session if omitted)" },
         reason: { type: "string", description: "Why this lock is needed" },
         ttlMs: { type: "number", description: "Lock TTL in ms (default 300000 = 5min)" },
       },
-      required: ["file", "sessionId"],
+      required: ["file"],
     },
   },
   {
@@ -162,13 +146,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       // ── Session handlers ──
-      case "vibe_session_start": {
-        const { agent, branch, name: sessionName } = args as Record<string, unknown>;
-        const session = sessionManager.createSession({
-          agent: (agent as string) as any,
-          name: (sessionName as string) || `${agent}-${branch}`,
-          branch: branch as string,
-        });
+      case "vibe_session_info": {
+        const session = sessionManager.getCurrentSession();
         return ok({ session });
       }
 
@@ -177,18 +156,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return ok({ sessions });
       }
 
-      case "vibe_session_stop": {
-        const { sessionId } = args as Record<string, unknown>;
-        const session = sessionManager.updateSessionStatus(sessionId as string, "closed");
-        if (!session) return fail(`Session ${sessionId} not found`);
-        // Release all locks held by this session
-        lockService.releaseSessionLocks(sessionId as string);
-        return ok({ session });
-      }
-
       // ── Lock handlers ──
       case "vibe_lock_acquire": {
-        const { file, sessionId, reason, ttlMs } = args as Record<string, unknown>;
+        let { file, sessionId, reason, ttlMs } = args as Record<string, unknown>;
+        if (!sessionId) {
+          const current = sessionManager.getCurrentSession();
+          sessionId = current.id;
+        }
         try {
           const lock = lockService.acquireLock(file as string, sessionId as string, reason as string | undefined, ttlMs as number | undefined);
           return ok({ lock });
@@ -245,6 +219,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     throw new McpError(ErrorCode.InternalError, msg);
   }
 });
+
+// ── Initialize session on startup ────────────────────────
+sessionManager.getCurrentSession();
 
 // ── Start ───────────────────────────────────────────────────
 const transport = new StdioServerTransport();

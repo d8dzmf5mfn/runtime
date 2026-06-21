@@ -1,44 +1,121 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
+import { execSync } from 'child_process';
 import { nanoid } from 'nanoid';
 import type { Session, CreateSessionOptions, SessionStatus, AgentType } from '@runtime/shared';
 
-const RUNTIME_DIR = join(tmpdir(), 'runtime-data');
+/**
+ * 从环境变量自动检测当前 AI agent 类型。
+ *
+ * 检测优先级：
+ * 1. CLAUDE_PROJECT_DIR → claude
+ * 2. 父进程为 codex     → codex
+ * 3. VS Code 相关环境变量 → cursor
+ * 4. 兜底               → custom
+ */
+function detectAgent(): { agent: AgentType; name: string } {
+  // claude: 通过 CLAUDE_PROJECT_DIR 环境变量识别
+  const claudeProjectDir = process.env.CLAUDE_PROJECT_DIR;
+  if (claudeProjectDir) {
+    const projectName = claudeProjectDir.split('/').filter(Boolean).pop() || 'unknown';
+    return { agent: 'claude', name: `claude-${projectName}` };
+  }
 
-function ensureDir(): void { if (!existsSync(RUNTIME_DIR)) mkdirSync(RUNTIME_DIR, { recursive: true }); }
-function loadSessions(): Session[] {
-  ensureDir();
-  const p = join(RUNTIME_DIR, 'sessions.json');
-  if (!existsSync(p)) return [];
-  try { return JSON.parse(readFileSync(p, 'utf-8')); } catch { return []; }
+  // codex: 检查父进程命令行是否包含 'codex'
+  try {
+    const ppid = process.ppid;
+    const parentComm = execSync(`ps -p ${ppid} -o comm=`, {
+      encoding: 'utf-8',
+      timeout: 1000,
+    }).trim();
+    if (parentComm.includes('codex')) {
+      return { agent: 'codex' as AgentType, name: 'codex' };
+    }
+  } catch {
+    // ps 命令失败（如权限不足）则静默忽略
+  }
+
+  // cursor / VS Code: 通过 VS Code 环境变量识别
+  if (process.env.VSCODE_PID || process.env.VSCODE_NLS_CONFIG || process.env.VSCODE_CWD) {
+    return { agent: 'cursor', name: 'cursor' };
+  }
+
+  // 兜底
+  return { agent: 'custom', name: 'custom' };
 }
-function saveSessions(s: Session[]): void { ensureDir(); writeFileSync(join(RUNTIME_DIR, 'sessions.json'), JSON.stringify(s, null, 2)); }
 
 export class SessionManager {
-  createSession(opts: CreateSessionOptions): Session {
-    const sessions = loadSessions();
+  private sessions: Session[] = [];
+  private currentSession: Session | null = null;
+
+  /**
+   * 获取当前 session（懒初始化）。
+   * 第一次调用时自动运行 detectAgent() 创建 session。
+   */
+  getCurrentSession(): Session {
+    if (this.currentSession) return this.currentSession;
+    const detected = detectAgent();
     const id = nanoid(12);
     const now = new Date().toISOString();
-    const s: Session = { id, agent: opts.agent, name: opts.name, branch: opts.branch, worktreePath: '', status: 'active', createdAt: now, updatedAt: now, metadata: opts.metadata || {} };
-    sessions.push(s); saveSessions(sessions); return s;
+    this.currentSession = {
+      id,
+      agent: detected.agent,
+      name: detected.name,
+      branch: '',
+      worktreePath: '',
+      status: 'active',
+      createdAt: now,
+      updatedAt: now,
+      metadata: {},
+    };
+    this.sessions.push(this.currentSession);
+    return this.currentSession;
   }
-  getSession(id: string): Session | null { return loadSessions().find(s => s.id === id) || null; }
+
+  createSession(opts: CreateSessionOptions): Session {
+    const id = nanoid(12);
+    const now = new Date().toISOString();
+    const s: Session = {
+      id, agent: opts.agent, name: opts.name, branch: opts.branch,
+      worktreePath: '', status: 'active', createdAt: now, updatedAt: now,
+      metadata: opts.metadata || {},
+    };
+    this.sessions.push(s);
+    return s;
+  }
+
+  getSession(id: string): Session | null {
+    return this.sessions.find(s => s.id === id) || null;
+  }
+
   listSessions(status?: SessionStatus): Session[] {
-    const s = loadSessions();
-    return status ? s.filter(x => x.status === status) : s.reverse();
+    const s = status ? this.sessions.filter(x => x.status === status) : [...this.sessions];
+    return s.reverse();
   }
+
   updateSessionStatus(id: string, status: SessionStatus): Session | null {
-    const s = loadSessions(); const i = s.findIndex(x => x.id === id); if (i === -1) return null;
-    s[i].status = status; s[i].updatedAt = new Date().toISOString(); saveSessions(s); return s[i];
+    const s = this.sessions.find(x => x.id === id);
+    if (!s) return null;
+    s.status = status;
+    s.updatedAt = new Date().toISOString();
+    return s;
   }
+
   updateWorktreePath(id: string, wp: string): Session | null {
-    const s = loadSessions(); const i = s.findIndex(x => x.id === id); if (i === -1) return null;
-    s[i].worktreePath = wp; s[i].updatedAt = new Date().toISOString(); saveSessions(s); return s[i];
+    const s = this.sessions.find(x => x.id === id);
+    if (!s) return null;
+    s.worktreePath = wp;
+    s.updatedAt = new Date().toISOString();
+    return s;
   }
+
   deleteSession(id: string): boolean {
-    const s = loadSessions(); const i = s.findIndex(x => x.id === id); if (i === -1) return false;
-    s.splice(i, 1); saveSessions(s); return true;
+    const i = this.sessions.findIndex(x => x.id === id);
+    if (i === -1) return false;
+    this.sessions.splice(i, 1);
+    return true;
   }
-  close(): void {}
+
+  close(): void {
+    this.sessions = [];
+    this.currentSession = null;
+  }
 }
