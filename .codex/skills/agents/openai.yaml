@@ -1,0 +1,4 @@
+interface:
+  display_name: "Runtime MCP"
+  short_description: "File locking, context selection, token budgets, and SOP rules."
+  default_prompt: "Manage concurrent AI agent sessions with file locking, context optimization, and coding policy enforcement."
