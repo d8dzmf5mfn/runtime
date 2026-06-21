@@ -5,9 +5,16 @@ description: "Use the @runtime-mcp MCP tools for concurrent AI agent development
 
 # Runtime MCP
 
-Runtime MCP provides 7 tools that turn Codex into a concurrent AI development gateway. Use this skill as a quick reference for when to call each tool.
+Runtime MCP provides 9 tools that turn Codex into a concurrent AI development gateway. Use this skill as a quick reference for when to call each tool.
 
 ## Tools Overview
+
+### Session Tools (`vibe_session_*`)
+
+| Tool | When to call |
+|---|---|
+| `vibe_session_info` | When you need to **check the current AI session** — returns agent type, session ID, name |
+| `vibe_session_list` | When you need to **list all active sessions** |
 
 ### File Locks (`vibe_lock_*`)
 

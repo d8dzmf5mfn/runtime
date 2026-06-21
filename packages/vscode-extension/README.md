@@ -36,4 +36,4 @@ This extension does not add any VS Code settings. All configuration is managed t
 
 ### 0.1.0
 
-Initial release: MCP server with 7 tools for concurrent AI development.
+Initial release: MCP server with 9 tools for concurrent AI development.

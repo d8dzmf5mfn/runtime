@@ -153,7 +153,9 @@ claude mcp add --transport stdio runtime --scope project -- \
 
 | 工具 | 功能 | 类别 |
 |------|------|------|
-| `vibe_lock_acquire` | 获取文件独占锁 | 文件锁 |
+| `vibe_session_info` | 查看当前 AI 会话信息 | 会话 |
+| `vibe_session_list` | 列出所有活跃会话 | 会话 |
+| `vibe_lock_acquire` | 获取文件独占锁（sessionId 可选） | 文件锁 |
 | `vibe_lock_release` | 释放文件锁 | 文件锁 |
 | `vibe_lock_list` | 查看所有活跃锁 | 文件锁 |
 | `context_select` | 分析关联文件 & 排名 | 上下文 |
@@ -207,10 +209,6 @@ claude mcp add --transport stdio runtime --scope project -- \
 ## 演示场景
 
 ```bash
-# 启动两个 Agent 会话
-runtime vibe session-start -a cursor -b feat/payment
-runtime vibe session-start -a copilot -b feat/ui
-
 # Agent A 锁定核心文件
 runtime vibe lock-acquire src/api/auth.ts -s <session-id-A>
 
@@ -277,7 +275,7 @@ packages/
 ├── vibe-sync/          # VibeSync 核心
 ├── context-pruner/     # ContextPruner 核心
 ├── cli/                # CLI 入口
-├── mcp-server/         # MCP Server（7 个工具）
+├── mcp-server/         # MCP Server（9 个工具）
 └── vscode-extension/   # VS Code Extension（MCP 集成）
 ```
 
