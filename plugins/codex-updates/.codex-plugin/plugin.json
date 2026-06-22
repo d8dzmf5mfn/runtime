@@ -1,0 +1,23 @@
+{
+  "name": "codex-updates",
+  "version": "0.1.0+codex.20260622040158",
+  "description": "Fetch and display Codex desktop app release notes from the official changelog.",
+  "author": {
+    "name": "Runtime Team",
+    "url": "https://github.com/d8dzmf5mfn/runtime"
+  },
+  "repository": "https://github.com/d8dzmf5mfn/runtime",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Updates",
+    "shortDescription": "Browse official Codex desktop app release notes",
+    "longDescription": "Codex Updates fetches the latest release notes from the official Codex desktop app changelog at developers.openai.com/codex/changelog and displays them in a clear, readable format.",
+    "developerName": "Runtime Team",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Knowledge"
+    ],
+    "defaultPrompt": "What's new in the latest Codex desktop app update?"
+  }
+}
