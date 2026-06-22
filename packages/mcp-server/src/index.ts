@@ -8,21 +8,13 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { SessionManager, FileLockService, LockConflictError } from "@runtime/vibe-sync";
 import { FileSelector, TokenBudgetManager, SOPGraphEngine, PromptBuilder } from "@runtime/context-pruner";
-
-// ── Resolve repo root ───────────────────────────────────────
-// Try CLAUDE_PROJECT_DIR first (Claude Code), then workspace folder env, then cwd
-function resolveRepoRoot(): string {
-  return process.env.CLAUDE_PROJECT_DIR
-    || process.env.VSCODE_WORKSPACE_ROOT
-    || process.env.PWD
-    || process.cwd();
-}
+import { resolveRepoRoot } from "./runtime-env.js";
 
 const repoRoot = resolveRepoRoot();
 const lockService = new FileLockService();
 const sessionManager = new SessionManager();
 const fileSelector = new FileSelector({ repoPath: repoRoot });
-const tokenBudget = new TokenBudgetManager();
+const tokenBudget = new TokenBudgetManager(128000, 50, repoRoot);
 const sopEngine = new SOPGraphEngine(repoRoot);
 const promptBuilder = new PromptBuilder(fileSelector, tokenBudget, sopEngine);
 
