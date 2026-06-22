@@ -1,5 +1,16 @@
+# Exclude source and build files
 src/**
 tsconfig.json
 .gitignore
 **/*.map
-node_modules
+.git/**
+
+# Exclude node_modules (hoisted from root)
+node_modules/**
+**/node_modules/**
+packages/**
+scripts/**
+bootstrap.sh
+demo/**
+.vscode/**
+.hermes/**

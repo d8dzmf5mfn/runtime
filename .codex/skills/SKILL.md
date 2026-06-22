@@ -52,17 +52,14 @@ Standard Operating Procedure rules let you enforce coding policies automatically
 
 ## Configuration
 
-The plugin is already configured in this workspace's `.codex/mcp.json`:
+The MCP server is configured for trusted Codex projects in `.codex/config.toml`:
 
-```json
-{
-  "servers": {
-    "runtime": {
-      "command": "node",
-      "args": ["path/to/runtime/packages/mcp-server/dist/index.js"]
-    }
-  }
-}
+```toml
+[mcp_servers.runtime]
+command = "node"
+args = ["packages/mcp-server/dist/index.js"]
+cwd = "."
+required = true
 ```
 
 ## Quick Start

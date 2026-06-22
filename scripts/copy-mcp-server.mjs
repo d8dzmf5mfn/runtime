@@ -3,13 +3,14 @@
  * Copies the compiled MCP server into the VS Code extension package
  * for distribution.
  */
-import { copyFileSync, mkdirSync, readdirSync, existsSync, rmSync } from 'fs';
+import { mkdirSync, existsSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { build } from 'esbuild';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..');
-const serverSrc = join(repoRoot, 'packages', 'mcp-server', 'dist');
+const serverEntry = join(repoRoot, 'packages', 'mcp-server', 'src', 'index.ts');
 const extDest = join(repoRoot, 'packages', 'vscode-extension', 'server');
 
 // Remove old server bundle
@@ -17,16 +18,25 @@ if (existsSync(extDest)) {
     rmSync(extDest, { recursive: true, force: true });
 }
 
-// Check if source exists
-if (!existsSync(serverSrc)) {
-    console.error('MCP server dist not found. Run npm run build in packages/mcp-server first.');
+if (!existsSync(serverEntry)) {
+    console.error(`MCP server entry point not found: ${serverEntry}`);
     process.exit(1);
 }
 
-// Copy all files from server dist
 mkdirSync(extDest, { recursive: true });
-for (const file of readdirSync(serverSrc)) {
-    copyFileSync(join(serverSrc, file), join(extDest, file));
-}
+await build({
+    entryPoints: [serverEntry],
+    outfile: join(extDest, 'index.js'),
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    target: 'node18',
+    minifyWhitespace: true,
+    sourcemap: false,
+});
 
-console.log(`Copied MCP server to ${extDest}`);
+const bundlePath = join(extDest, 'index.js');
+const bundle = readFileSync(bundlePath, 'utf8').replace(/[ \t]+$/gm, '');
+writeFileSync(bundlePath, bundle);
+
+console.log(`Bundled MCP server to ${extDest}`);

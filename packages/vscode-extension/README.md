@@ -9,30 +9,24 @@ AI Dev Control Plane — file locking, context selection, token budgeting, and S
 - **Token Budgeting** — Estimate and control token usage for AI context windows
 - **SOP Rules** — Enforce coding policies across your team
 
-## Requirements
+## Installation
 
-This extension works with the [Runtime](https://github.com/d8dzmf5mfn/runtime) project's MCP server. You need to:
+Install the extension from a `.vsix` or the VS Code Marketplace, then restart VS Code. Version `0.1.1` bundles a self-contained MCP server; cloning or building the Runtime repository is not required for installed extensions.
 
-1. Clone the Runtime repo:
-   ```bash
-   git clone https://github.com/d8dzmf5mfn/runtime.git
-   cd runtime
-   npm install && npm run build
-   ```
-
-2. Install this extension from the VS Code Marketplace
-
-3. Restart VS Code — the `runtime` MCP server will be available in agent mode
+For local development, run `npm install`, `npm run build`, then `npm run package` from the repository root.
 
 ## Extension Settings
 
 This extension does not add any VS Code settings. All configuration is managed through the MCP server.
 
-## Known Issues
-
-- The MCP server must be built before use (`npm run build` in the Runtime repo)
-
 ## Release Notes
+
+### 0.1.1
+
+- Bundle all MCP runtime dependencies into the extension
+- Pass the active workspace root to context tools
+- Restore Git-history relevance scoring in ESM and packaged servers
+- Package cleanly from the npm workspace without leaking monorepo files
 
 ### 0.1.0
 

@@ -1,0 +1,11 @@
+{
+  "name": "runtime-plugins",
+  "plugins": [
+    {
+      "name": "codex-updates",
+      "source": { "source": "local", "path": "./plugins/codex-updates" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Developer Tools"
+    }
+  ]
+}
