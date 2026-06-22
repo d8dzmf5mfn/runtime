@@ -8,10 +8,10 @@ SKILL_DIR="$(dirname "$SCRIPT_DIR")"
 echo "=== Runtime MCP Init ==="
 
 # 1. Check MCP config
-if [ -f .codex/mcp.json ]; then
-  echo "✅ .codex/mcp.json found"
+if [ -f .codex/config.toml ]; then
+  echo "✅ .codex/config.toml found"
 else
-  echo "⚠️  No .codex/mcp.json — create one with the runtime-mcp server config"
+  echo "⚠️  No .codex/config.toml — create one with the runtime-mcp server config"
 fi
 
 # 2. Init SOP graph

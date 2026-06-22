@@ -1,6 +1,6 @@
 {
   "name": "codex-updates",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fetch and display Codex desktop app release notes from the official changelog.",
   "author": {
     "name": "Runtime Team",

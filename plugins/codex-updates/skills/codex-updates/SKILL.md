@@ -9,6 +9,6 @@ Fetches release notes from the official Codex desktop app changelog.
 
 ## Script
 
-Run `scripts/fetch-codex-updates.js --count 3` to get the latest releases.
+Run `node ../../scripts/fetch-codex-updates.js --count 3` from this skill directory to get the latest releases.
 
 Source: https://developers.openai.com/codex/changelog

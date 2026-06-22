@@ -1,4 +1,5 @@
 import { readFileSync, existsSync } from 'fs';
+import { execFileSync } from 'child_process';
 import { globSync } from 'glob';
 import type { FileScore } from '@runtime/shared';
 export interface FileSelectorOptions { repoPath?: string; topK?: number; gitHistoryWeight?: number; importGraphWeight?: number; keywordWeight?: number; }
@@ -50,9 +51,13 @@ export class FileSelector {
   }
   private calcGitHistoryScore(filePath: string): number {
     try {
-      const { execSync } = require('child_process');
-      const count = execSync(`git log --oneline --follow -- "${filePath}" 2>/dev/null | wc -l`, { cwd: this.repoPath, encoding: 'utf-8' });
-      return Math.min(1, parseInt(count.trim() || '0') / 20);
+      const history = execFileSync('git', ['log', '--format=%H', '--follow', '--', filePath], {
+        cwd: this.repoPath,
+        encoding: 'utf-8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      });
+      const count = history.trim() ? history.trim().split('\n').length : 0;
+      return Math.min(1, count / 20);
     } catch { return 0; }
   }
   private calcImportScore(activeFile: string, targetFile: string): number {

@@ -63,6 +63,13 @@ describe('FileSelector', () => {
     }
   });
 
+  it('should score files using git history in ESM', () => {
+    const fs = new FileSelector({ repoPath: tmpDir, topK: 5, gitHistoryWeight: 1, importGraphWeight: 0, keywordWeight: 0 });
+    const results = fs.selectRelatedFiles('src/types.ts');
+
+    expect(results.some(result => result.reasons.some(reason => reason.startsWith('git:')))).toBe(true);
+  });
+
   it('should cache results for same file', () => {
     const fs = new FileSelector({ repoPath: tmpDir, topK: 5 });
     const r1 = fs.selectRelatedFiles('src/auth.ts');

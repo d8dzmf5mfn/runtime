@@ -1,8 +1,0 @@
-{
-  "servers": {
-    "runtime": {
-      "command": "node",
-      "args": ["${CLAUDE_PROJECT_DIR:-.}/packages/mcp-server/dist/index.js"]
-    }
-  }
-}

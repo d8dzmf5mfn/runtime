@@ -12,19 +12,20 @@ A **Codex plugin** that fetches and displays the latest changelog from the offic
 
 ## Installation
 
-### In Codex Desktop App
+### From this repository
 
-1. Open the **Plugins** panel in Codex
-2. Search for **"Codex Updates"**
-3. Click **Install**
-4. Ask Codex: *"What's new in the latest Codex update?"*
+```bash
+codex plugin marketplace add d8dzmf5mfn/runtime
+```
 
-### Manual Installation (from GitHub)
+Restart Codex, open **Plugins**, select the `runtime-plugins` marketplace, and install **Codex Updates**. Start a new thread after installation.
+
+### Local development
 
 ```bash
 git clone https://github.com/d8dzmf5mfn/runtime.git
 cd runtime/plugins/codex-updates
-# Restart Codex desktop app, then open Plugins
+node scripts/fetch-codex-updates.js --count 3
 ```
 
 ## Usage
@@ -40,7 +41,10 @@ Codex will automatically invoke the plugin to fetch and display release notes.
 
 ```bash
 node scripts/fetch-codex-updates.js --count 5
+node --test scripts/fetch-codex-updates.test.js
 ```
+
+Version `0.1.1` updates the parser for the current official changelog structure and fails clearly if the upstream format changes.
 
 ## Source
 

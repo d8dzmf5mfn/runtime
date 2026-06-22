@@ -40,12 +40,17 @@ export function activate(context: vscode.ExtensionContext) {
                     return servers;
                 }
 
+                const environment: Record<string, string | number | null> = {};
+                if (workspaceRoot) {
+                    environment.VSCODE_WORKSPACE_ROOT = workspaceRoot.fsPath;
+                }
+
                 servers.push(new vscode.McpStdioServerDefinition(
                     'runtime',
                     'node',
                     [serverPath.fsPath],
-                    {},
-                    '0.1.0'
+                    environment,
+                    '0.1.1'
                 ));
 
                 return servers;

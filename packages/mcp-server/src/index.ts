@@ -28,7 +28,7 @@ const promptBuilder = new PromptBuilder(fileSelector, tokenBudget, sopEngine);
 
 // ── Server ──────────────────────────────────────────────────
 const server = new Server(
-  { name: "runtime-mcp", version: "0.2.0" },
+  { name: "runtime-mcp", version: "0.1.1" },
   { capabilities: { tools: {} } }
 );
 
