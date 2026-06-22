@@ -1,5 +1,9 @@
 [mcp_servers.runtime]
 command = "node"
-args = ["packages/mcp-server/dist/index.js"]
-cwd = "."
-required = true
+args = ["/Users/chengziyan/Developer/Runtime/packages/mcp-server/dist/index.js"]
+cwd = "/Users/chengziyan/Developer/Runtime"
+required = false
+
+[mcp_servers.runtime.env]
+RUNTIME_AGENT = "codex"
+RUNTIME_PROJECT_ROOT = "/Users/chengziyan/Developer/Runtime"

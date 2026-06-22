@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import { nanoid } from 'nanoid';
 import type { Session, CreateSessionOptions, SessionStatus, AgentType } from '@runtime/shared';
 
@@ -7,9 +6,9 @@ import type { Session, CreateSessionOptions, SessionStatus, AgentType } from '@r
  *
  * 检测优先级：
  * 1. CLAUDE_PROJECT_DIR → claude
- * 2. 父进程为 codex     → codex
+ * 2. RUNTIME_AGENT=codex → codex
  * 3. VS Code 相关环境变量 → cursor
- * 4. 兜底               → custom
+ * 4. 兜底                → custom
  */
 function detectAgent(): { agent: AgentType; name: string } {
   // claude: 通过 CLAUDE_PROJECT_DIR 环境变量识别
@@ -19,18 +18,9 @@ function detectAgent(): { agent: AgentType; name: string } {
     return { agent: 'claude', name: `claude-${projectName}` };
   }
 
-  // codex: 检查父进程命令行是否包含 'codex'
-  try {
-    const ppid = process.ppid;
-    const parentComm = execSync(`ps -p ${ppid} -o comm=`, {
-      encoding: 'utf-8',
-      timeout: 1000,
-    }).trim();
-    if (parentComm.includes('codex')) {
-      return { agent: 'codex' as AgentType, name: 'codex' };
-    }
-  } catch {
-    // ps 命令失败（如权限不足）则静默忽略
+  // codex: 通过显式环境变量识别，避免在受限环境中枚举进程
+  if (process.env.RUNTIME_AGENT === 'codex') {
+    return { agent: 'codex', name: 'codex' };
   }
 
   // cursor / VS Code: 通过 VS Code 环境变量识别

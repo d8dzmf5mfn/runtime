@@ -1,9 +1,10 @@
 import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import type { FileScore, TokenBudget } from '@runtime/shared';
 interface HistoryEntry { key: string; tokens: number; timestamp: number; }
 export class TokenBudgetManager {
-  private maxTokens: number; private history: HistoryEntry[] = []; private usedTokens = 0; private maxHistorySize: number;
-  constructor(maxTokens = 128000, maxHistorySize = 50) { this.maxTokens = maxTokens; this.maxHistorySize = maxHistorySize; }
+  private maxTokens: number; private history: HistoryEntry[] = []; private usedTokens = 0; private maxHistorySize: number; private repoPath: string;
+  constructor(maxTokens = 128000, maxHistorySize = 50, repoPath = process.cwd()) { this.maxTokens = maxTokens; this.maxHistorySize = maxHistorySize; this.repoPath = repoPath; }
   estimateTokens(files: FileScore[]): { fileTokens: { path: string; tokens: number }[]; total: number } {
     const fileTokens = files.map(f => ({ path: f.path, tokens: this.countFileTokens(f.path) }));
     return { fileTokens, total: fileTokens.reduce((sum, f) => sum + f.tokens, 0) };
@@ -28,7 +29,7 @@ export class TokenBudgetManager {
   getBudget(): TokenBudget { return { maxTokens: this.maxTokens, usedTokens: this.usedTokens, remainingTokens: this.maxTokens - this.usedTokens }; }
   reset(): void { this.usedTokens = 0; this.history = []; }
   private countFileTokens(filePath: string): number {
-    const fullPath = `${process.cwd()}/${filePath}`;
+    const fullPath = join(this.repoPath, filePath);
     if (!existsSync(fullPath)) return 0;
     try { const content = readFileSync(fullPath, 'utf-8'); return Math.ceil(content.length / 4); } catch { return 0; }
   }

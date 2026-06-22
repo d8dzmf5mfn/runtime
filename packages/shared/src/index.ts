@@ -1,4 +1,4 @@
-export type AgentType = 'cursor' | 'claude' | 'custom';
+export type AgentType = 'cursor' | 'claude' | 'codex' | 'custom';
 export type SessionStatus = 'active' | 'paused' | 'merged' | 'closed';
 export interface Session { id: string; agent: AgentType; name: string; branch: string; worktreePath: string; status: SessionStatus; createdAt: string; updatedAt: string; metadata: Record<string, string>; }
 export interface CreateSessionOptions { agent: AgentType; name: string; branch: string; metadata?: Record<string, string>; }
